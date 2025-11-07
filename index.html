@@ -75,7 +75,7 @@
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
                             Copy
-                            <kbd class="ml-2 rounded-md bg-gray-500 px-1.5 py-0.5 text-xs font-sans font-semibold text-gray-100">Ctrl</kbd>
+                            <kbd id="modKey" class="ml-2 rounded-md bg-gray-500 px-1.5 py-0.5 text-xs font-sans font-semibold text-gray-100">Ctrl</kbd>
                             <span class="mx-1 text-gray-400">+</span>
                             <kbd class="rounded-md bg-gray-500 px-1.5 py-0.5 text-xs font-sans font-semibold text-gray-100">Enter</kbd>
                         </button>
@@ -125,6 +125,13 @@
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const previewEl = document.getElementById('latexPreview'); 
+        const modKeyEl = document.getElementById('modKey');
+
+        // --- NEW: Detect OS and set modifier key ---
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+        if (isMac) {
+            modKeyEl.textContent = 'Cmd';
+        }
 
         // --- NEW: Shortcut for converting (Enter on MATLAB input) ---
         matlabInput.addEventListener('keydown', (e) => {
@@ -142,7 +149,10 @@
 
         // --- NEW: Shortcut for copying (Ctrl + Enter anywhere) ---
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
+            // --- UPDATED: Check for Ctrl on non-Macs and Cmd on Macs ---
+            const isModifierPressed = isMac ? e.metaKey : e.ctrlKey;
+            
+            if (isModifierPressed && e.key === 'Enter') {
                 e.preventDefault(); // Prevent default browser action
                 copyBtn.click(); // Trigger the copy button
             }
