@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATLAB to LaTeX Converter</title>
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 3. KaTeX CSS (for the preview) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-KiWOvVjnN8qwBYLPOdcGgGuR8rKAUoIE9L5hmTYRWM/b2sASCzG-ZKAe0JDRDjpB" crossorigin="anonymous">
+
+    <style>
+        /* Apply Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* KaTeX font size override to make it match the UI */
+        .katex {
+             font-size: 1.125rem; /* ~text-lg */
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100"> <!-- Darker body background -->
+
+    <!-- Main Content Container -->
+    <div class="flex min-h-screen w-full items-center justify-center p-4">
+        
+        <!-- Converter Card -->
+        <!-- Darker card background and border -->
+        <div class="w-full max-w-2xl rounded-xl border border-gray-700 bg-gray-900 p-6 shadow-lg md:p-8">
+            
+            <!-- Header -->
+            <div class="mb-6 text-center">
+                <h1 class="text-2xl font-bold text-white">MATLAB to LaTeX Converter</h1>
+                <!-- Subtler text color -->
+                <p class="mt-2 text-sm text-gray-500">Paste your MATLAB matrix and get the LaTeX <code class="text-xs">bmatrix</code> code.</p>
+            </div>
+
+            <div class="grid w-full gap-6">
+                <!-- Input Section -->
+                <div class="flex flex-col space-y-2">
+                    <label for="matlabInput" class="text-sm font-medium leading-none text-gray-300">MATLAB Matrix</label>
+                    <textarea 
+                        id="matlabInput" 
+                        class="flex w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950" 
+                        style="min-height: 120px;"
+                        placeholder="[1, 2, 3; 4, 5, 6; 7, 8, 9]"
+                    ></textarea>
+                </div>
+                
+                <!-- Convert Button -->
+                <div class="flex justify-center">
+                    <!-- Yellow button, dark text -->
+                    <button id="convertBtn" class="inline-flex h-10 w-full items-center justify-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-gray-950 shadow-sm transition-colors hover:bg-yellow-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 sm:w-auto">
+                        <!-- NEW: Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/></svg>
+                        Convert to LaTeX
+                        <kbd class="ml-2 rounded-md bg-gray-900/20 px-1.5 py-0.5 text-xs font-sans font-semibold text-gray-900">Enter</kbd>
+                    </button>
+                </div>
+                
+                <!-- Output Section -->
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="latexOutput" class="text-sm font-medium leading-none text-gray-300">LaTeX Matrix (bmatrix)</label>
+                        <!-- Copy button with yellow focus -->
+                        <button id="copyBtn" class="inline-flex h-9 items-center justify-center rounded-md bg-gray-700 px-3 text-sm font-medium text-gray-200 shadow-sm transition-colors hover:bg-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950" title="Copy to clipboard (Ctrl + Enter)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                            <kbd class="ml-2 rounded-md bg-gray-500 px-1.5 py-0.5 text-xs font-sans font-semibold text-gray-100">Ctrl</kbd>
+                            <span class="mx-1 text-gray-400">+</span>
+                            <kbd class="rounded-md bg-gray-500 px-1.5 py-0.5 text-xs font-sans font-semibold text-gray-100">Enter</kbd>
+                        </button>
+                    </div>
+                    <textarea 
+                        id="latexOutput" 
+                        class="flex w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950" 
+                        style="min-height: 120px;"
+                        placeholder="\begin{bmatrix}
+ 1 & 2 & 3 \\ 
+ 4 & 5 & 6 \\ 
+ 7 & 8 & 9 
+\end{bmatrix}" 
+                    ></textarea> 
+                </div>
+
+                <!-- Live Preview Section -->
+                <div class="flex flex-col space-y-2">
+                    <label class="text-sm font-medium leading-none text-gray-300">Live Preview</label>
+                    <div id="latexPreview" class="flex w-full items-center justify-center rounded-md border border-gray-700 bg-gray-950 p-4 text-gray-100" style="min-height: 120px;">
+                        <span class="text-gray-500">Preview will appear here...</span>
+                    </div>
+                </div>
+
+                <!-- REMOVED Tooltip Bar -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Custom Message Box (hidden by default) -->
+    <!-- Yellow message box -->
+    <div id="messageBox" class="fixed top-5 right-5 z-50 translate-x-[120%] rounded-md bg-yellow-500 px-4 py-3 text-gray-950 shadow-lg transition-transform duration-300 ease-in-out">
+        <span id="messageText"></span>
+    </div>
+
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTadx5My+1CrSvGhYClP6SVIayjMyCDzgyFwbEAxKjF2iNnLUmKCAI+AGu" crossorigin="anonymous"></script>
+
+    <!-- App Logic -->
+    <script>
+        // Get all elements
+        const matlabInput = document.getElementById('matlabInput');
+        const convertBtn = document.getElementById('convertBtn');
+        const latexOutput = document.getElementById('latexOutput');
+        const copyBtn = document.getElementById('copyBtn');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const previewEl = document.getElementById('latexPreview'); 
+
+        // --- NEW: Shortcut for converting (Enter on MATLAB input) ---
+        matlabInput.addEventListener('keydown', (e) => {
+            // Check for 'Enter' key without the 'Shift' key
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Prevent adding a new line
+                convertMatlabToLatex(); // Call new function
+            }
+        });
+
+        // --- NEW: Listen for input on MATLAB field ---
+        matlabInput.addEventListener('input', () => {
+            convertMatlabToLatex();
+        });
+
+        // --- NEW: Shortcut for copying (Ctrl + Enter anywhere) ---
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault(); // Prevent default browser action
+                copyBtn.click(); // Trigger the copy button
+            }
+        });
+
+        // Function to update the KaTeX preview
+        function updatePreview() {
+            const latexString = latexOutput.value;
+            previewEl.innerHTML = ''; 
+            previewEl.classList.remove('text-yellow-500'); // Use yellow for error
+
+            if (latexString.trim() === '') {
+                previewEl.innerHTML = '<span class="text-gray-500">Preview will appear here...</span>';
+                return;
+            }
+
+            try {
+                katex.render(latexString, previewEl, {
+                    throwOnError: true, 
+                    displayMode: true  
+                });
+            } catch (e) {
+                previewEl.textContent = e.message.replace(/KaTeX parse error: /g, '');
+                previewEl.classList.add('text-yellow-500'); // Use yellow for error
+            }
+        }
+        
+        // Convert Button Listener
+        convertBtn.addEventListener('click', () => {
+            convertMatlabToLatex();
+        });
+
+        // --- NEW: Extracted Conversion Function ---
+        function convertMatlabToLatex() {
+            const input = matlabInput.value.trim();
+            
+            if (!input) {
+                latexOutput.value = '';
+                updatePreview(); 
+                copyBtn.disabled = true; // Disable copy if no input
+                copyBtn.classList.add('opacity-50');
+                return;
+            }
+
+            let processed = input.replace(/^\[|\]$/g, '').replace(/;$/, '');
+            
+            const rows = processed.split(';');
+
+            const latexRows = rows.map(row => {
+                // Split by one or more spaces or commas
+                return row.trim().split(/[\s,]+/).filter(Boolean).join(' & ');
+            });
+
+            const latexString = `\\begin{bmatrix}\n ${latexRows.join(' \\\\ \n ')} \n\\end{bmatrix}`;
+
+            latexOutput.value = latexString;
+            
+            updatePreview();
+
+            copyBtn.disabled = false;
+            copyBtn.classList.remove('opacity-50');
+        }
+
+        // Listen for input on the LaTeX text area
+        latexOutput.addEventListener('input', updatePreview);
+
+        // Initialize the preview and copy button state on page load
+        updatePreview();
+        convertMatlabToLatex(); // Run once on load to set button state
+
+        // Helper: Show custom message
+        function showMessage(msg) {
+            messageText.textContent = msg;
+            messageBox.classList.remove('translate-x-[120%]');
+            setTimeout(() => {
+                messageBox.classList.add('translate-x-[120%]');
+            }, 2000);
+        }
+
+        // Copy Button Listener
+        copyBtn.addEventListener('click', () => {
+            if (!latexOutput.value) return;
+
+            latexOutput.select();
+            latexOutput.setSelectionRange(0, 99999); 
+            try {
+                document.execCommand('copy');
+                showMessage('Copied to clipboard!');
+            } catch (err) {
+                showMessage('Failed to copy.');
+                console.error('Failed to copy text: ', err);
+            }
+            
+            window.getSelection().removeAllRanges();
+            latexOutput.blur();
+        });
+
+    </script>
+</body>
+</html>
